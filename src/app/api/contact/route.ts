@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { sendContactEmail } from "@/lib/mail";
+import { canSendEmail, sendContactEmail } from "@/lib/mail";
 
 const ContactSchema = z.object({
   name: z.string().min(1).max(100),
@@ -12,26 +12,6 @@ const ContactSchema = z.object({
   message: z.string().min(1).max(5000),
   website: z.string().optional(), // honeypot
 });
-
-// helper: do we have everything needed to send real email?
-function canSendEmail() {
-  const required = [
-    "SMTP_HOST",
-    "SMTP_PORT",
-    "SMTP_USER",
-    "SMTP_PASS",
-    "NOTIFY_FROM",
-    "NOTIFY_TO",
-  ] as const;
-  const missing = required.filter(
-    (k) => !process.env[k] || process.env[k] === ""
-  );
-  if (missing.length) {
-    console.warn("[contact] Email disabled, missing envs:", missing.join(", "));
-    return false;
-  }
-  return true;
-}
 
 export async function POST(request: Request) {
   try {
@@ -44,32 +24,30 @@ export async function POST(request: Request) {
       );
     }
 
-    // Honeypot: accept silently but do nothing if filled
-    if (parsed.data.website && parsed.data.website.trim().length > 0) {
-      return NextResponse.json({ ok: true });
+    // Honeypot: silently accept but do nothing
+    if (parsed.data.website?.trim()) {
+      return NextResponse.json({ ok: true, emailed: false, previewUrl: null });
     }
 
     const { name, email, message } = parsed.data;
 
-    // Debug logs (safe)
-    console.log("[contact] saving", {
-      name,
-      emailLen: email.length,
-      msgLen: message.length,
-    });
-    console.log(
-      "[contact] DB host:",
-      process.env.DATABASE_URL?.split("@")[1]?.split("/")[0] ?? "unknown"
-    );
-
-    // ✅ Always write to DB
+    // ✅ Always write to DB first
     await prisma.contactMessage.create({ data: { name, email, message } });
 
-    // ✉️ Try to send email only if SMTP envs are present
+    // ✉️ Email if configured
     if (canSendEmail()) {
       try {
-        const { previewUrl } = await sendContactEmail({ name, email, message });
-        return NextResponse.json({ ok: true, emailed: true, previewUrl });
+        const { previewUrl, messageId } = await sendContactEmail({
+          name,
+          email,
+          message,
+        });
+        return NextResponse.json({
+          ok: true,
+          emailed: true,
+          previewUrl,
+          messageId,
+        });
       } catch (err) {
         console.error("[contact] Email send failed:", err);
         return NextResponse.json({
@@ -78,10 +56,10 @@ export async function POST(request: Request) {
           previewUrl: null,
         });
       }
-    } else {
-      // Email intentionally skipped (no SMTP config)
-      return NextResponse.json({ ok: true, emailed: false, previewUrl: null });
     }
+
+    // Email skipped (no SMTP config)
+    return NextResponse.json({ ok: true, emailed: false, previewUrl: null });
   } catch (err) {
     console.error("Contact POST error:", err);
     return NextResponse.json(
@@ -91,7 +69,7 @@ export async function POST(request: Request) {
   }
 }
 
-// TEMP: GET debugger — list last 5 messages (remove after testing)
+/** TEMP: list latest 5 messages (remove once done testing) */
 export async function GET() {
   try {
     const last = await prisma.contactMessage.findMany({
