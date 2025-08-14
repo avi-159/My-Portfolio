@@ -1,12 +1,12 @@
-
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model ContactMessage {
@@ -18,16 +18,16 @@ model ContactMessage {
 }
 
 model Project {
-  id        Int       @id @default(autoincrement())
-  slug      String    @unique
+  id        Int          @id @default(autoincrement())
+  slug      String       @unique
   title     String
   summary   String
   year      Int
   cover     String?
   metrics   Metric[]
   tags      ProjectTag[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model Metric {
@@ -39,8 +39,8 @@ model Metric {
 }
 
 model Tag {
-  id    Int          @id @default(autoincrement())
-  name  String       @unique
+  id       Int          @id @default(autoincrement())
+  name     String       @unique
   projects ProjectTag[]
 }
 

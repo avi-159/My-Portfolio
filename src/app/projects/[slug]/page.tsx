@@ -14,9 +14,11 @@ export async function generateStaticParams() {
 export default async function ProjectDetail({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const project = await getProjectBySlug(params.slug);
+  const { slug } = await params; // 👈 await because Next 15 passes a Promise
+
+  const project = await getProjectBySlug(slug);
   if (!project) return notFound();
 
   // --- 7B.3: Demo chart only for the "sales-forecasting" project ---
@@ -94,10 +96,9 @@ export default async function ProjectDetail({
           xKey="week"
           yKey="value"
           yLabel="Units"
-          yFormatOptions={{ maximumFractionDigits: 0 }} // ← serializable options
+          yFormatOptions={{ maximumFractionDigits: 0 }}
         />
       )}
-
       {/* -------------------------------------------------------- */}
     </article>
   );

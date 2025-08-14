@@ -20,16 +20,16 @@ export default function RootLayout({
             <Link className="font-semibold" href="/">
               Avinash Pachauri
             </Link>
-            <nav className="flex gap-6 text-sm">
-              <a href="/projects" className="hover:underline">
+            <nav className="flex gap-6 text-sm" aria-label="Primary">
+              <Link href="/projects" className="hover:underline">
                 Projects
-              </a>
-              <a href="/about" className="hover:underline">
+              </Link>
+              <Link href="/about" className="hover:underline">
                 About
-              </a>
-              <a href="/contact" className="hover:underline">
+              </Link>
+              <Link href="/contact" className="hover:underline">
                 Contact
-              </a>
+              </Link>
             </nav>
           </header>
           <main className="py-10">{children}</main>

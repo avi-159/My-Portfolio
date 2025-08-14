@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <section className="grid gap-6 md:grid-cols-5 md:items-center">
@@ -10,18 +12,18 @@ export default function Home() {
           Explore my projects, notebooks, and interactive visuals.
         </p>
         <div className="mt-6 flex gap-3">
-          <a
+          <Link
             href="/projects"
             className="rounded-xl px-4 py-2 bg-slate-900 text-white hover:opacity-90"
           >
             View Projects
-          </a>
-          <a
+          </Link>
+          <Link
             href="/contact"
             className="rounded-xl px-4 py-2 border border-slate-300 hover:bg-white"
           >
             Contact Me
-          </a>
+          </Link>
         </div>
       </div>
 
