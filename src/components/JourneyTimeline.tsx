@@ -10,8 +10,6 @@ import {
   CartesianGrid,
   Tooltip,
   ReferenceDot,
-  // Recharts types
-  TooltipProps,
 } from "recharts";
 
 /** Categories we’ll visualize with distinct dot colors */
@@ -104,14 +102,18 @@ const catColor: Record<Category, string> = {
   Project: "#a78bfa", // violet-400
 };
 
-/** Dark tooltip with category color chip
- * Use proper Recharts typing instead of any[] to satisfy eslint.
- */
-function DarkTooltip({ active, payload }: TooltipProps<number, string>) {
+/** Minimal tooltip props typed around our data structure (no `any`, no Recharts generics). */
+type DarkTooltipProps = {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload: JourneyMilestone }>;
+};
+
+/** Dark tooltip with category color chip */
+function DarkTooltip({ active, payload }: DarkTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   // payload[0].payload is the original datum we fed to the chart
-  const m = payload[0].payload as JourneyMilestone;
+  const m = payload[0].payload;
 
   return (
     <div className="max-w-[320px] rounded-xl border border-white/10 bg-slate-900/90 p-3 text-xs text-slate-200 shadow-xl backdrop-blur-sm">
@@ -161,6 +163,7 @@ function Legend() {
   );
 }
 
+/** The timeline component */
 export default function JourneyTimeline({
   milestones = data,
   height = 280,
