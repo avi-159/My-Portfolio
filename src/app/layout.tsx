@@ -34,7 +34,7 @@ export default function RootLayout({
           </header>
           <main className="py-10">{children}</main>
           <footer className="border-t mt-12 pt-6 text-sm text-slate-500">
-            © {new Date().getFullYear()} Your Name · Data Analytics
+            © {new Date().getFullYear()} Avinash Pachauri | Data Analytics
           </footer>
         </div>
       </body>

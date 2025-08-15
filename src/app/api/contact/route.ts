@@ -31,6 +31,12 @@ export async function POST(request: Request) {
 
     const { name, email, message } = parsed.data;
 
+    console.log("[contact] build", {
+      env: process.env.VERCEL_ENV,
+      url: process.env.VERCEL_URL,
+      commit: (process.env.VERCEL_GIT_COMMIT_SHA ?? "n/a").slice(0, 7),
+    });
+
     // ✅ Always write to DB first
     await prisma.contactMessage.create({ data: { name, email, message } });
 
