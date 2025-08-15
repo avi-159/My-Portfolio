@@ -10,6 +10,8 @@ import {
   CartesianGrid,
   Tooltip,
   ReferenceDot,
+  // Recharts types
+  TooltipProps,
 } from "recharts";
 
 /** Categories we’ll visualize with distinct dot colors */
@@ -74,7 +76,7 @@ const data: JourneyMilestone[] = [
       "Integrated bookings, reviews, weather & events; features like availability ratio, event counts & sentiment drove performance.",
     category: "Project",
     value: 85,
-    link: "/projects", // update to your real slug when ready
+    link: "/projects",
   },
   {
     year: 2024.5,
@@ -93,34 +95,24 @@ const data: JourneyMilestone[] = [
     category: "Work",
     value: 92,
   },
-  /*{
-    year: 2026,
-    title: "New Role — Data Analyst",
-    blurb:
-      "Owning analytics for XYZ domain; building KPIs and predictive models.",
-    category: "Work",
-    value: 95,
-    link: "/projects/new-role", // optional
-  },*/
 ];
 
-/** Category colors for the dots (kept subtle but distinct on dark UI) */
+/** Category colors for the dots (subtle but distinct on dark UI) */
 const catColor: Record<Category, string> = {
-  Education: "#60a5fa", // Tailwind sky-400
+  Education: "#60a5fa", // sky-400
   Work: "#34d399", // emerald-400
   Project: "#a78bfa", // violet-400
 };
 
-/** Dark tooltip with category color chip */
-function DarkTooltip({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: any[];
-}) {
-  if (!active || !payload || !payload.length) return null;
-  const m: JourneyMilestone = payload[0].payload;
+/** Dark tooltip with category color chip
+ * Use proper Recharts typing instead of any[] to satisfy eslint.
+ */
+function DarkTooltip({ active, payload }: TooltipProps<number, string>) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  // payload[0].payload is the original datum we fed to the chart
+  const m = payload[0].payload as JourneyMilestone;
+
   return (
     <div className="max-w-[320px] rounded-xl border border-white/10 bg-slate-900/90 p-3 text-xs text-slate-200 shadow-xl backdrop-blur-sm">
       <div className="flex items-center gap-2">
@@ -169,7 +161,6 @@ function Legend() {
   );
 }
 
-/** The timeline component */
 export default function JourneyTimeline({
   milestones = data,
   height = 280,
