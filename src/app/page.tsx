@@ -219,6 +219,9 @@ export default function Home() {
       {/* 6) ACHIEVEMENTS STRIP — credibility markers */}
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
         <div className="flex flex-wrap gap-2">
+          <h2 id="skills-title" className="text-xl font-semibold text-white">
+            Achievements
+          </h2>
           {[
             "President's Award (Silver) — Innovation & Entrepreneurship",
             "Medtronic Grand Challenge — Finalist",

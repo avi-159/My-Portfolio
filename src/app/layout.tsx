@@ -3,7 +3,7 @@ import "./globals.css";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Your Name — Data Analytics Portfolio",
+  title: "Avinash Pachauri Portfolio",
   description: "Projects, dashboards, and insights.",
 };
 
