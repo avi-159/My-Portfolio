@@ -5,101 +5,107 @@ import Link from "next/link";
 import { getAllProjects, getProjectBySlug } from "@/lib/queries";
 import LineChartCard from "@/components/LineChartCard";
 
-export async function generateStaticParams() {
-  // Optional: pre-render routes at build time
-  const projects = await getAllProjects();
-  return projects.map((p) => ({ slug: p.slug }));
-}
+// src/app/projects/[slug]/page.tsx
 
 export default async function ProjectDetail({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params; // 👈 await because Next 15 passes a Promise
-
-  const project = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(params.slug);
   if (!project) return notFound();
 
-  // --- 7B.3: Demo chart only for the "sales-forecasting" project ---
-  const isForecasting = project.slug === "sales-forecasting";
-  const demoSeries: Array<{ week: string; value: number }> = [
-    { week: "W1", value: 120 },
-    { week: "W2", value: 132 },
-    { week: "W3", value: 128 },
-    { week: "W4", value: 140 },
-    { week: "W5", value: 138 },
-    { week: "W6", value: 150 },
-  ];
-  // -----------------------------------------------------------------
-
   return (
-    <article className="max-w-3xl">
-      <Link href="/projects" className="text-sm text-slate-600 hover:underline">
-        ← Back to Projects
-      </Link>
-
-      <h1 className="mt-3 text-3xl font-bold">{project.title}</h1>
-      <p className="mt-2 text-slate-700">{project.summary}</p>
-
-      {project.cover && (
-        <div className="mt-6 overflow-hidden rounded-2xl border bg-white">
-          <Image
-            src={project.cover}
-            alt={project.title}
-            width={1600}
-            height={900}
-            className="w-full h-auto object-cover"
-            priority
-          />
-        </div>
-      )}
-
-      {project.metrics?.length ? (
-        <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
-          {project.metrics.map((m) => (
-            <div key={m.label} className="rounded-xl border bg-slate-50 p-3">
-              <div className="text-xl font-semibold">{m.value}</div>
-              <div className="text-slate-600">{m.label}</div>
-            </div>
+    <div className="max-w-6xl mx-auto px-6 py-12">
+      {/* Header Section */}
+      <header className="mb-12">
+        <h1 className="text-5xl font-bold text-white mb-4">{project.title}</h1>
+        <div className="flex gap-3 flex-wrap">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-gray-400"
+            >
+              {tag}
+            </span>
           ))}
         </div>
-      ) : null}
+      </header>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {project.tags.map((t) => (
-          <span key={t} className="rounded-full border px-2 py-0.5 text-xs">
-            {t}
-          </span>
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Left Column: The Narrative */}
+        <div className="lg:col-span-2 space-y-12">
+          <section className="prose prose-invert max-w-none">
+            <h2 className="text-2xl font-semibold text-white">
+              Executive Summary
+            </h2>
+            <p className="text-gray-300 leading-relaxed">{project.summary}</p>
+
+            <h2 className="text-2xl font-semibold text-white mt-8">
+              Technical Workflow
+            </h2>
+            <p className="text-gray-300">
+              I transitioned the analysis from a messy Jupyter Notebook to a{" "}
+              <strong>Modular Python Pipeline</strong>. The project involved
+              cleaning 9 separate relational tables, translating Portuguese
+              attributes, and handling complex payment aggregations to prevent
+              revenue inflation.
+            </p>
+          </section>
+
+          {/* TABLEAU SECTION */}
+          <section className="bg-white/5 border border-white/10 rounded-3xl p-1 overflow-hidden">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-2">
+                Interactive Business Dashboard
+              </h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Explore logistics efficiency and geographic market share.
+              </p>
+            </div>
+            {/* Replace with your actual Tableau Public Embed URL */}
+            <iframe
+              src="YOUR_TABLEAU_PUBLIC_URL_HERE?:showVizHome=no&embed=true"
+              className="w-full aspect-[16/9] border-0"
+            />
+          </section>
+        </div>
+
+        {/* Right Column: Sidebar Links & Metrics */}
+        <div className="space-y-6">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Project Links
+            </h3>
+            <div className="space-y-3">
+              <a
+                href="YOUR_GITHUB_LINK"
+                className="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
+              >
+                <span>View Python ETL</span>
+                <span>→</span>
+              </a>
+              <a
+                href="YOUR_TABLEAU_LINK"
+                className="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 rounded-xl transition"
+              >
+                <span>Tableau Public</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-blue-400 mb-2">
+              Key Accomplishment
+            </h3>
+            <p className="text-sm text-gray-300">
+              Identified a 15% revenue gap by correcting payment-join
+              duplications in the raw dataset.
+            </p>
+          </div>
+        </div>
       </div>
-
-      <section className="prose mt-8">
-        <h2>What I did</h2>
-        <p>
-          Replace this with your narrative: problem framing, data sources,
-          methods, key findings, and business impact.
-        </p>
-        <ul>
-          <li>Data: source, volume, cadence</li>
-          <li>Methods: EDA, statistics, modeling</li>
-          <li>Outputs: dashboards, reports</li>
-          <li>Impact: metrics moved, decisions enabled</li>
-        </ul>
-      </section>
-
-      {/* --- 7B.3: Render demo chart for forecasting project --- */}
-      {isForecasting && (
-        <LineChartCard
-          title="Weekly Forecast (demo)"
-          data={demoSeries}
-          xKey="week"
-          yKey="value"
-          yLabel="Units"
-          yFormatOptions={{ maximumFractionDigits: 0 }}
-        />
-      )}
-      {/* -------------------------------------------------------- */}
-    </article>
+    </div>
   );
 }

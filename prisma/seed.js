@@ -20,52 +20,16 @@ const prisma = new PrismaClient();
  * }[]} */
 const DATA = [
   {
-    slug: "ab-test-conversion",
-    title: "A/B Test: Checkout Conversion",
+    slug: "brazilian-ecommerce-analysis", // This will be your URL: /projects/brazilian-ecommerce-analysis
+    title: "Olist E-Commerce Ecosystem Analysis",
     summary:
-      "Designed and analyzed an A/B test for checkout UX. Measured uplift, power, and confidence intervals; recommended rollout.",
+      "An end-to-end data engineering and analytics pipeline. I built a modular Python ETL to process 100k+ orders, optimized SQL schemas for business KPIs, and designed a strategic Tableau dashboard to visualize logistics and revenue growth.",
     year: 2024,
-    cover: "/projects/ab-test-conversion/cover.jpg",
-    tags: ["Experimentation", "Stats", "Python"],
+    cover: "/projects/olist-cover.jpg", // Make sure to put an image in public/projects/
+    tags: ["Python (ETL)", "SQL", "Tableau", "Next.js"],
     metrics: [
-      { label: "Uplift", value: "+3.8%" },
-      { label: "p-value", value: "0.021" },
-    ],
-  },
-  {
-    slug: "sales-forecasting",
-    title: "Sales Forecasting with Prophet",
-    summary:
-      "Time-series pipeline with holiday effects and cross-validation. Deployed weekly forecasts and alerting.",
-    year: 2023,
-    cover: "/projects/sales-forecasting/cover.jpg",
-    tags: ["Forecasting", "Time Series", "Python"],
-    metrics: [
-      { label: "MAPE", value: "6.1%" },
-      { label: "Horizon", value: "12 weeks" },
-    ],
-  },
-  {
-    slug: "customer-segmentation",
-    title: "Customer Segmentation",
-    summary:
-      "RFM/K-Means segmentation to tailor lifecycle messaging and promo strategy.",
-    year: 2022,
-    cover: "/projects/customer-segmentation/cover.jpg",
-    tags: ["Clustering", "SQL", "BI"],
-    metrics: [],
-  },
-  {
-    slug: "airbnb-demand-forecasting",
-    title: "Machine Learning and Data Analytics",
-    summary:
-      "Designed and analyzed an A/B test for checkout UX. Measured uplift, power, and confidence intervals; recommended rollout.",
-    year: 2024,
-    cover: "/projects/ab-test-conversion/cover.jpg",
-    tags: ["Experimentation", "Stats", "Python"],
-    metrics: [
-      { label: "Uplift", value: "+3.8%" },
-      { label: "p-value", value: "0.021" },
+      { label: "Dataset Size", value: "100k+ Orders" },
+      { label: "Engineering", value: "Modular Pipeline" },
     ],
   },
 ];
@@ -136,13 +100,13 @@ async function validateData() {
     if (!p.slug || !p.title) {
       throw new Error(
         `Each project needs at least 'slug' and 'title'. Offender: ${JSON.stringify(
-          p
-        )}`
+          p,
+        )}`,
       );
     }
     if (slugs.has(p.slug)) {
       throw new Error(
-        `Duplicate slug "${p.slug}" in DATA. Slugs must be unique.`
+        `Duplicate slug "${p.slug}" in DATA. Slugs must be unique.`,
       );
     }
     slugs.add(p.slug);
@@ -184,7 +148,7 @@ async function main() {
   ]);
 
   console.log(
-    `\n🎉 Seed finished. Totals → Projects: ${pc}, Tags: ${tc}, Metrics: ${mc}`
+    `\n🎉 Seed finished. Totals → Projects: ${pc}, Tags: ${tc}, Metrics: ${mc}`,
   );
 }
 
