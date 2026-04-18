@@ -65,7 +65,7 @@ export default async function ProjectDetail({
             </div>
             {/* Replace with your actual Tableau Public Embed URL */}
             <iframe
-              src="YOUR_TABLEAU_PUBLIC_URL_HERE?:showVizHome=no&embed=true"
+              src="https://public.tableau.com/views/OList_analysis/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link?:showVizHome=no&embed=true"
               className="w-full aspect-[16/9] border-0"
             />
           </section>
